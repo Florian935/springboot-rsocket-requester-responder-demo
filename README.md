@@ -7,3 +7,22 @@ This project contains the 4 `modes` of RSocket exchanges:
 - request-response
 - streaming
 - channel 
+
+The requester can call the responder.
+
+
+## RSocket client
+
+The easiest way to test the responder is to use the RSocket client.
+
+`To download the RSocket Client CLI:`
+  wget -O rsc.jar https://github.com/making/rsc/releases/download/0.4.2/rsc-0.4.2.jar
+
+`To make the client easier to wirk with, set an alias:`
+  alias rsc='java -jar rsc.jar'
+
+`To use the client to do request-response against a server on tcp://localhost:7000:`
+  rsc --debug --request --data "{\"origin\":\"Client\",\"interaction\":\"Request\"}" --route request-response tcp://localhost:7000
+
+`To use the client to do fire-and-forget against the same server:`
+  rsc --debug --fnf --data "{\"origin\":\"Client\",\"interaction\":\"Fire And Forget\"}" --route fire-and-forget tcp://localhost:7000

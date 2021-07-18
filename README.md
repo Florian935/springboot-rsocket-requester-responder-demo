@@ -18,7 +18,7 @@ The easiest way to test the responder is to use the RSocket client.
 ## To download the RSocket Client CLI
   wget -O rsc.jar https://github.com/making/rsc/releases/download/0.9.1/rsc-0.9.1.jar
 
-## To make the client easier to wirk with, set an alias
+## To make the client easier to work with, set an alias
   alias rsc='java -jar rsc.jar'
 
 ## To use the client to do request-response against a server on tcp://localhost:7000

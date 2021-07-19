@@ -31,9 +31,11 @@ public class RSocketController {
     }
 
     @MessageMapping("fire-and-forget")
-    void fireAndForget(@Payload final Message message) {
+    Mono<Void> fireAndForget(@Payload final Message message) {
 
         log.info("Received fire-and-forget request: {}", message);
+
+        return Mono.empty();
     }
 
     @MessageMapping("stream")

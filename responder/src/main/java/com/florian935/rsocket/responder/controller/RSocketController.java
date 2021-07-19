@@ -27,4 +27,10 @@ public class RSocketController {
 
         return Mono.just(new Message(SERVER, RESPONSE));
     }
+
+    @MessageMapping("fire-and-forget")
+    void fireAndForget(@Payload final Message message) {
+
+        log.info("Received fire-and-forget request: {}", message);
+    }
 }

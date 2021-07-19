@@ -17,8 +17,10 @@ import static lombok.AccessLevel.PRIVATE;
 public class RSocketShellClient {
 
     static String REQUEST_RESPONSE_ROUTE = "request-response";
+    static String FIRE_AND_FORGET_ROUTE = "fire-and-forget";
     static String CLIENT = "Client";
-    static String REQUEST = "Request";
+    static String REQUEST_RESPONSE = "Request";
+    static String FIRE_AND_FORGET = "Fire-And-Forget";
 
     RSocketRequester rSocketRequester;
 
@@ -28,10 +30,22 @@ public class RSocketShellClient {
         log.info("\nSending one request. Waiting for one response ...");
         final Message message = rSocketRequester
                 .route(REQUEST_RESPONSE_ROUTE)
-                .data(new Message(CLIENT, REQUEST))
+                .data(new Message(CLIENT, REQUEST_RESPONSE))
                 .retrieveMono(Message.class)
                 .block();
 
         log.info("\nResponse was: {}", message);
+    }
+
+    @ShellMethod("Send one request. No response will be returned")
+    void fireAndForget() {
+
+        log.info("\nFire-And-Forget. Sending one request. Expect no response (check server log) ...");
+
+        this.rSocketRequester
+                .route(FIRE_AND_FORGET_ROUTE)
+                .data(new Message(CLIENT, FIRE_AND_FORGET))
+                .send()
+                .block();
     }
 }

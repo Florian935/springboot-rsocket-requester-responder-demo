@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static java.time.Duration.ofSeconds;
 import static lombok.AccessLevel.PRIVATE;
 
 @Controller
@@ -32,5 +34,16 @@ public class RSocketController {
     void fireAndForget(@Payload final Message message) {
 
         log.info("Received fire-and-forget request: {}", message);
+    }
+
+    @MessageMapping("stream")
+    Flux<Message> stream(@Payload final Message message) {
+
+        log.info("Received stream request: {}", message);
+
+        return Flux.
+                interval(ofSeconds(1))
+                .map(index -> new Message(SERVER, STREAM, index))
+                .log();
     }
 }

@@ -35,13 +35,16 @@ public class RSocketShellClient {
     void requestResponse() {
 
         log.info("\nSending one request. Waiting for one response ...");
-        final Message message = rSocketRequester
+
+        rSocketRequester
                 .route(REQUEST_RESPONSE_ROUTE)
                 .data(new Message(CLIENT, REQUEST_RESPONSE))
                 .retrieveMono(Message.class)
-                .block();
-
-        log.info("\nResponse was: {}", message);
+                .subscribe(
+                        message -> log.info("\nResponse was: {}", message),
+                        error -> log.error("An error occurred: {}", error.getMessage()),
+                        () -> log.info("Request-Response interaction completed ...")
+                        );
     }
 
     @ShellMethod("Send one request. No response will be returned")
@@ -53,7 +56,11 @@ public class RSocketShellClient {
                 .route(FIRE_AND_FORGET_ROUTE)
                 .data(new Message(CLIENT, FIRE_AND_FORGET))
                 .send()
-                .block();
+                .subscribe(
+                        message -> log.info("This message never appear because it's the fire-and-forget mode."),
+                        error -> log.error("An error occurred: {}", error.getMessage()),
+                        () -> log.info("Fire-And-Forget interaction completed ...")
+                );
     }
 
     @ShellMethod("Send one request. Many responses (stream) will be printed.")
@@ -65,7 +72,11 @@ public class RSocketShellClient {
                 .route(STREAM_ROUTE)
                 .data(new Message(CLIENT, STREAM))
                 .retrieveFlux(Message.class)
-                .subscribe(message -> log.info("Response received: {}", message));
+                .doOnCancel(() -> log.info("Stream interaction stopped ..."))
+                .subscribe(
+                        message -> log.info("Response received: {}", message),
+                        error -> log.error("An error occurred: {}", error.getMessage()),
+                        () -> log.info("This message never appear because the stream is never completed (unlimited)"));
     }
 
     @ShellMethod("Stop streaming messages from the server.")

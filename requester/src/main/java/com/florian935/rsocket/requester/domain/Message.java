@@ -1,4 +1,4 @@
-package com.florian935.rsocket.responder.domain;
+package com.florian935.rsocket.requester.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

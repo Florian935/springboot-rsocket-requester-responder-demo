@@ -8,6 +8,7 @@ import reactor.core.publisher.Hooks;
 public class ResponderApplication {
 
 	public static void main(String[] args) {
+
 		Hooks.onErrorDropped(error -> {});
 		SpringApplication.run(ResponderApplication.class, args);
 	}

@@ -22,7 +22,7 @@ The easiest way to test the responder is to use the RSocket client.
   alias rsc='java -jar rsc.jar'
 
 ## To use the client to do request-response against a server on tcp://localhost:7000
-  rsc --debug --request --data "{\"origin\":\"Client\",\"interaction\":\"Request\"}" --route request-response tcp://localhost:7000
+  rsc --debug --request --data "{ 'origin': 'Client', 'interaction': 'Fire And Forget' }" --route request-response tcp://localhost:7000
 
 ## To use the client to do fire-and-forget against the same server
-  rsc --debug --fnf --data "{\"origin\":\"Client\",\"interaction\":\"Fire And Forget\"}" --route fire-and-forget tcp://localhost:7000
+  rsc --debug --fnf --data "{ 'origin': 'Client', 'interaction': 'Fire And Forget' }" --route fire-and-forget tcp://localhost:7000

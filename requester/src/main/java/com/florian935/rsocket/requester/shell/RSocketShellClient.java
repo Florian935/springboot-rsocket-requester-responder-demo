@@ -44,7 +44,7 @@ public class RSocketShellClient {
                         message -> log.info("\nResponse was: {}", message),
                         error -> log.error("An error occurred: {}", error.getMessage()),
                         () -> log.info("Request-Response interaction completed ...")
-                        );
+                );
     }
 
     @ShellMethod("Send one request. No response will be returned")
@@ -76,7 +76,8 @@ public class RSocketShellClient {
                 .subscribe(
                         message -> log.info("Response received: {}", message),
                         error -> log.error("An error occurred: {}", error.getMessage()),
-                        () -> log.info("This message never appear because the stream is never completed (unlimited)"));
+                        () -> log.info("This message never appear because the stream is never completed (unlimited)")
+                );
     }
 
     @ShellMethod("Stop streaming messages from the server.")

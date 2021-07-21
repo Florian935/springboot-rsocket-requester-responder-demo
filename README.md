@@ -1,4 +1,4 @@
-# Spring Boot with Rsocket requester - responder
+# Spring Boot with Rsocket requester / responder
 
 This project is a demo of Spring Boot app using `RSocket protocol` with a requester and a responder.
 

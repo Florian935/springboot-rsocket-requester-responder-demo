@@ -100,6 +100,7 @@ public class RSocketShellClient {
                 .route(CHANNEL_ROUTE)
                 .data(settings)
                 .retrieveFlux(Message.class)
+                .doOnCancel(() -> log.info("Channel interaction stopped ..."))
                 .subscribe(
                         message -> log.info("Received: {} \n(Type 'stop' to stop.)", message),
                         error -> log.error("An error occurred: {}", error.getMessage()),

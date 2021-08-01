@@ -29,3 +29,8 @@ The easiest way to test the responder is to use the RSocket client.
 
 ## To use the client to do stream against a server on tcp://localhost:7000
   `rsc --debug --stream --data "{ 'origin': 'Client', 'interaction': 'Fire And Forget' }" --route stream tcp://localhost:7000`
+
+## To use the client to do channel against a server on tcp://localhost:7000
+  `rsc --debug --channl --data - --route channel tcp://localhost:7000`
+
+After this command, you have can send input to have a stream-stream interaction in the command prompt.

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 import static java.time.Duration.ofSeconds;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -46,6 +48,16 @@ public class RSocketController {
         return Flux.
                 interval(ofSeconds(1))
                 .map(index -> new Message(SERVER, STREAM, index))
+                .log();
+    }
+
+    @MessageMapping("channel")
+    Flux<Message> channel(@Payload final Flux<Duration> settings) {
+
+        return settings
+                .doOnNext(setting -> log.info("\nFrequency setting is {} second(s). \n", setting.getSeconds()))
+                .switchMap(setting -> Flux.interval(setting)
+                                            .map(index -> new Message(SERVER, CHANNEL, index)))
                 .log();
     }
 }

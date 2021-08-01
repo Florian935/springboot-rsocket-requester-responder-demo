@@ -8,9 +8,13 @@ import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import reactor.core.Disposable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.Objects;
 
+import static java.time.Duration.ofSeconds;
 import static lombok.AccessLevel.PRIVATE;
 
 @ShellComponent
@@ -22,10 +26,12 @@ public class RSocketShellClient {
     static String REQUEST_RESPONSE_ROUTE = "request-response";
     static String FIRE_AND_FORGET_ROUTE = "fire-and-forget";
     static String STREAM_ROUTE = "stream";
+    static String CHANNEL_ROUTE = "channel";
     static String CLIENT = "Client";
     static String REQUEST_RESPONSE = "Request";
     static String FIRE_AND_FORGET = "Fire-And-Forget";
     static String STREAM = "Stream";
+    static String CHANNEL = "Channel";
     static Disposable disposable;
 
 
@@ -79,6 +85,28 @@ public class RSocketShellClient {
                         () -> log.info("This message never appear because the stream is never completed (unlimited)")
                 );
     }
+
+    @ShellMethod("Stream some settings to the server. Stream of responses will be printed ")
+    public void channel() {
+
+        final Mono<Duration> setting1 = Mono.just(ofSeconds(1));
+        final Mono<Duration> setting2 = Mono.just(ofSeconds(3)).delayElement(ofSeconds(5));
+        final Mono<Duration> setting3 = Mono.just(ofSeconds(5)).delayElement(ofSeconds(15));
+
+        final Flux<Duration> settings = Flux.concat(setting1, setting2, setting3)
+                .doOnNext(d -> log.info("\nSending setting for {} - second interval.\n", d.getSeconds()));
+
+        disposable = this.rSocketRequester
+                .route(CHANNEL_ROUTE)
+                .data(settings)
+                .retrieveFlux(Message.class)
+                .subscribe(
+                        message -> log.info("Received: {} \n(Type 'stop' to stop.)", message),
+                        error -> log.error("An error occurred: {}", error.getMessage()),
+                        () -> log.info("Channel interaction completed ...")
+                );
+    }
+
 
     @ShellMethod("Stop streaming messages from the server.")
     void stop() {

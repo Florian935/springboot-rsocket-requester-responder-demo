@@ -52,11 +52,11 @@ public class RSocketController {
     }
 
     @MessageMapping("channel")
-    Flux<Message> channel(@Payload final Flux<Duration> settings) {
+    Flux<Message> channel(@Payload final Flux<Integer> settings) {
 
         return settings
-                .doOnNext(setting -> log.info("\nFrequency setting is {} second(s). \n", setting.getSeconds()))
-                .switchMap(setting -> Flux.interval(setting)
+                .doOnNext(setting -> log.info("\nFrequency setting is {} second(s). \n", setting))
+                .switchMap(setting -> Flux.interval(ofSeconds(setting))
                                             .map(index -> new Message(SERVER, CHANNEL, index)))
                 .log();
     }

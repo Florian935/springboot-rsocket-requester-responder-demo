@@ -31,7 +31,6 @@ public class RSocketShellClient {
     static String REQUEST_RESPONSE = "Request";
     static String FIRE_AND_FORGET = "Fire-And-Forget";
     static String STREAM = "Stream";
-    static String CHANNEL = "Channel";
     static Disposable disposable;
 
 

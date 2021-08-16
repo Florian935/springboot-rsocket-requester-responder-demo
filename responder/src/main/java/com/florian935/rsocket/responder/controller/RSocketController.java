@@ -7,6 +7,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.messaging.rsocket.annotation.ConnectMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -71,10 +74,15 @@ public class RSocketController {
         return Mono.just(new Message(SERVER, RESPONSE));
     }
 
+    @PreAuthorize("hasRole('USER')")
     @MessageMapping("fire-and-forget")
-    Mono<Void> fireAndForget(@Payload final Message message) {
+    Mono<Void> fireAndForget(@Payload final Message message,
+                             @AuthenticationPrincipal UserDetails user) {
 
         log.info("Received fire-and-forget request: {}", message);
+        log.info("Fire-And-Forget initiated by '{}' in the role '{}'",
+                user.getUsername(),
+                user.getAuthorities());
 
         return Mono.empty();
     }

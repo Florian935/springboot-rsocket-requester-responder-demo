@@ -27,9 +27,8 @@ public class RSocketConfiguration {
     static String SHELL_CLIENT_ROUTE = "shell-client";
 
     @Bean
-    RSocketRequester rSocketRequester(
-            RSocketRequester.Builder builder,
-            RSocketStrategies rSocketStrategies) {
+    RSocketRequester rSocketRequester(RSocketRequester.Builder builder,
+                                      RSocketStrategies rSocketStrategies) {
 
         final String client = UUID.randomUUID().toString();
         log.info("Connecting using client ID: {}", client);

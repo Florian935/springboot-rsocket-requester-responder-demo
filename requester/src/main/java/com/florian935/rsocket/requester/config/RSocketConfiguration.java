@@ -6,6 +6,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.codec.CharSequenceEncoder;
+import org.springframework.core.codec.StringDecoder;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.messaging.rsocket.RSocketStrategies;
 import org.springframework.messaging.rsocket.annotation.support.RSocketMessageHandler;
@@ -41,8 +44,8 @@ public class RSocketConfiguration {
                 .rsocketConnector(rSocketConnector -> rSocketConnector.acceptor(responder))
                 .tcp(HOST, PORT);
 
-        rSocketRequester.rsocket()
-                .onClose()
+        rSocketRequester.rsocketClient()
+                .source()
                 .doOnError(error -> log.warn("Connection CLOSED"))
                 .doFinally(consumer -> log.info("Client DISCONNECTED"))
                 .subscribe();

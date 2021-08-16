@@ -18,7 +18,7 @@ import java.util.UUID;
 import static lombok.AccessLevel.PRIVATE;
 
 @Slf4j
-@Configuration
+//@Configuration
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class RSocketConfiguration {
 

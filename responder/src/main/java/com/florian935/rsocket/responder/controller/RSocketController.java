@@ -66,6 +66,7 @@ public class RSocketController {
                 .subscribe();
     }
 
+    @PreAuthorize("hasRole('USER')")
     @MessageMapping("request-response")
     Mono<Message> requestResponse(@Payload final Message message) {
 
@@ -74,7 +75,7 @@ public class RSocketController {
         return Mono.just(new Message(SERVER, RESPONSE));
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @MessageMapping("fire-and-forget")
     Mono<Void> fireAndForget(@Payload final Message message,
                              @AuthenticationPrincipal UserDetails user) {
@@ -87,6 +88,7 @@ public class RSocketController {
         return Mono.empty();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @MessageMapping("stream")
     Flux<Message> stream(@Payload final Message message) {
 
@@ -98,6 +100,7 @@ public class RSocketController {
                 .log();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @MessageMapping("channel")
     Flux<Message> channel(@Payload final Flux<Integer> settings) {
 

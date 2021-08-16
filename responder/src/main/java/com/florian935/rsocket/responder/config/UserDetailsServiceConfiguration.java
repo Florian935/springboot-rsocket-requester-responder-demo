@@ -21,8 +21,8 @@ public class UserDetailsServiceConfiguration {
 
     private UserDetails buildUser() {
 
-        return User
-                .withUsername("user")
+        return User.withDefaultPasswordEncoder()
+                .username("user")
                 .password("pass")
                 .roles("USER")
                 .build();
@@ -30,8 +30,8 @@ public class UserDetailsServiceConfiguration {
 
     private UserDetails buildAdmin() {
 
-        return User
-                .withUsername("admin")
+        return User.withDefaultPasswordEncoder()
+                .username("admin")
                 .password("pass")
                 .roles("ADMIN")
                 .build();

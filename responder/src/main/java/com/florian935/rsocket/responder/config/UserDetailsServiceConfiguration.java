@@ -5,11 +5,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
 @Configuration
 public class UserDetailsServiceConfiguration {
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 
     @Bean
     MapReactiveUserDetailsService authentication() {
@@ -21,18 +29,18 @@ public class UserDetailsServiceConfiguration {
 
     private UserDetails buildUser() {
 
-        return User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("pass")
+        return User
+                .withUsername("user")
+                .password(passwordEncoder().encode("pass"))
                 .roles("USER")
                 .build();
     }
 
     private UserDetails buildAdmin() {
 
-        return User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("pass")
+        return User
+                .withUsername("admin")
+                .password(passwordEncoder().encode("pass"))
                 .roles("ADMIN")
                 .build();
     }

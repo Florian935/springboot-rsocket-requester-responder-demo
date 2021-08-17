@@ -147,6 +147,19 @@ public class RSocketClientToServerITest {
                 .verify();
     }
 
+    @Test
+    public void testNoMatchingRouteGetsException() {
+
+        final Mono<String> result = requester
+                .route("invalid")
+                .data("anything")
+                .retrieveMono(String.class);
+
+        StepVerifier.create(result)
+                .expectErrorMessage("No handler for destination 'invalid'")
+                .verify(ofSeconds(5));
+     }
+
     @AfterAll
     public static void tearDownOnce() {
 

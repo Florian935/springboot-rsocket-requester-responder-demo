@@ -72,7 +72,18 @@ public class RSocketClientToServerITest {
                 .verifyComplete();
     }
 
+    @Test
+    public void testFireAndForget() {
 
+        final Mono<Void> result = requester
+                .route("fire-and-forget")
+                .data(new Message("TEST", "Fire-And-Forget"))
+                .retrieveMono(Void.class);
+
+        StepVerifier
+                .create(result)
+                .verifyComplete();
+    }
 
     @AfterAll
     public static void tearDownOnce() {

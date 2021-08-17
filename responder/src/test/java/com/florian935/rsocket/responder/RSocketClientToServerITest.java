@@ -2,12 +2,10 @@ package com.florian935.rsocket.responder;
 
 import com.florian935.rsocket.responder.domain.Message;
 import io.rsocket.SocketAcceptor;
-import io.rsocket.metadata.WellKnownMimeType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.rsocket.context.LocalRSocketServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.rsocket.RSocketRequester;
@@ -25,6 +23,7 @@ import reactor.test.StepVerifier;
 import java.time.Duration;
 import java.util.UUID;
 
+import static io.rsocket.metadata.WellKnownMimeType.MESSAGE_RSOCKET_AUTHENTICATION;
 import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +44,7 @@ public class RSocketClientToServerITest {
         final SocketAcceptor responder = RSocketMessageHandler.responder(strategies, new ClientHandler());
         credentials = new UsernamePasswordMetadata("user", "pass");
         requester = builder.tcp("localhost", port);
-        mimeType = MimeTypeUtils.parseMimeType(WellKnownMimeType.MESSAGE_RSOCKET_AUTHENTICATION.getString());
+        mimeType = MimeTypeUtils.parseMimeType(MESSAGE_RSOCKET_AUTHENTICATION.getString());
 
         requester = builder
                 .setupRoute("shell-client")

@@ -3,7 +3,6 @@ package com.florian935.rsocket.requester.shell;
 import com.florian935.rsocket.requester.domain.Message;
 import com.florian935.rsocket.requester.handler.ClientHandler;
 import io.rsocket.SocketAcceptor;
-import io.rsocket.metadata.WellKnownMimeType;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +24,7 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
+import static io.rsocket.metadata.WellKnownMimeType.MESSAGE_RSOCKET_AUTHENTICATION;
 import static java.time.Duration.ofSeconds;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -46,7 +46,7 @@ public class RSocketShellClient {
     final static String SHELL_CLIENT_ROUTE = "shell-client";
     final static String HOST = "localhost";
     static final MimeType SIMPLE_AUTH = MimeTypeUtils
-            .parseMimeType(WellKnownMimeType.MESSAGE_RSOCKET_AUTHENTICATION.getString());
+            .parseMimeType(MESSAGE_RSOCKET_AUTHENTICATION.getString());
     final static int PORT = 7000;
     final static String CLIENT_ID = UUID.randomUUID().toString();
 

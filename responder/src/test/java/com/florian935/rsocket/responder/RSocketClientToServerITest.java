@@ -17,12 +17,15 @@ import org.springframework.security.rsocket.metadata.SimpleAuthenticationEncoder
 import org.springframework.security.rsocket.metadata.UsernamePasswordMetadata;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
 import java.util.UUID;
 
+import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -83,6 +86,65 @@ public class RSocketClientToServerITest {
         StepVerifier
                 .create(result)
                 .verifyComplete();
+    }
+
+    @Test
+    public void testRequestGetsStream() {
+
+        final UsernamePasswordMetadata adminCredentials =
+            new UsernamePasswordMetadata("admin", "pass");
+        final Flux<Message> result = requester
+                .route("stream")
+                .metadata(adminCredentials, mimeType)
+                .data(new Message("TEST", "Stream"))
+                .retrieveFlux(Message.class);
+
+        StepVerifier
+                .create(result)
+                .consumeNextWith(message -> {
+                    assertThat(message.getOrigin()).isEqualTo("Server");
+                    assertThat(message.getInteraction()).isEqualTo("Stream");
+                    assertThat(message.getIndex()).isEqualTo(0L);
+                })
+                .expectNextCount(3)
+                .consumeNextWith(message -> {
+                    assertThat(message.getOrigin()).isEqualTo("Server");
+                    assertThat(message.getInteraction()).isEqualTo("Stream");
+                    assertThat(message.getIndex()).isEqualTo(4L);
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    public void testStreamGetsStream() {
+
+        final UsernamePasswordMetadata adminCredentials =
+                new UsernamePasswordMetadata("admin", "pass");
+        final Mono<Long> setting1 = Mono.just(ofSeconds(6)).delayElement(ofSeconds(0)).map(Duration::getSeconds);
+        final Mono<Long> setting2 = Mono.just(ofSeconds(6)).delayElement(ofSeconds(9)).map(Duration::getSeconds);
+        final Flux<Long> settings = Flux.concat(setting1, setting2);
+
+        final Flux<Message> result = requester
+                .route("channel")
+                .metadata(adminCredentials, mimeType)
+                .data(settings)
+                .retrieveFlux(Message.class);
+
+        StepVerifier
+                .create(result)
+                .consumeNextWith(message -> {
+                    assertThat(message.getOrigin()).isEqualTo("Server");
+                    assertThat(message.getInteraction()).isEqualTo("Channel");
+                    assertThat(message.getIndex()).isEqualTo(0L);
+                })
+                .consumeNextWith(message -> {
+                    assertThat(message.getOrigin()).isEqualTo("Server");
+                    assertThat(message.getInteraction()).isEqualTo("Channel");
+                    assertThat(message.getIndex()).isEqualTo(0L);
+                })
+                .thenCancel()
+                .verify();
     }
 
     @AfterAll

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,12 +103,17 @@ public class RSocketController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @MessageMapping("channel")
-    Flux<Message> channel(@Payload final Flux<Integer> settings) {
+    Flux<Message> channel(@Payload final Flux<Integer> settings,
+                          @AuthenticationPrincipal UserDetails user) {
+        log.info("Received channel request...");
+        log.info("Channel initiated by '{}' in the role '{}'", user.getUsername(), user.getAuthorities());
 
         return settings
                 .doOnNext(setting -> log.info("\nFrequency setting is {} second(s). \n", setting))
-                .switchMap(setting -> Flux.interval(ofSeconds(setting))
-                                            .map(index -> new Message(SERVER, CHANNEL, index)))
+                .doOnCancel(() -> log.warn("The client cancelled the channel."))
+                .switchMap(setting -> Flux
+                        .interval(ofSeconds(setting))
+                        .map(index -> new Message(SERVER, CHANNEL, index)))
                 .log();
     }
 }
